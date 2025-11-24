@@ -2,7 +2,7 @@ FROM golang:alpine as builder
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
 COPY . .
@@ -16,3 +16,4 @@ COPY --from=builder /app/main /
 EXPOSE 3000
 
 CMD ["/main"]
+# ENTRYPOINT [ "/main" ]

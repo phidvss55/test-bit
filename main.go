@@ -20,5 +20,6 @@ func main() {
 	// fmt.Printf("%+v\n", fact)
 
 	apiServer := api.NewApiServer(service)
+
 	log.Fatal(apiServer.Start(":3000"))
 }

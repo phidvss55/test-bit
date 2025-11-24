@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go-circleci/services"
 	"net/http"
 )
@@ -16,9 +17,16 @@ func NewApiServer(svc services.Service) *ApiServer {
 }
 
 func (s *ApiServer) Start(listenAddress string) error {
+	http.HandleFunc("/healthz", s.handleHealthCheck)
 	http.HandleFunc("/", s.handleGetCatFact)
 
+	fmt.Printf("API server listening on %s\n", listenAddress)
+
 	return http.ListenAndServe(listenAddress, nil)
+}
+
+func (s *ApiServer) handleHealthCheck(w http.ResponseWriter, r *http.Request) {
+	writeJson(w, http.StatusOK, map[string]string{"status": "ok"})
 }
 
 func (s *ApiServer) handleGetCatFact(w http.ResponseWriter, r *http.Request) {
