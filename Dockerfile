@@ -13,7 +13,7 @@ FROM scratch
 
 COPY --from=builder /app/main /
 
-EXPOSE 3000
+EXPOSE 5000
 
 CMD ["/main"]
 # ENTRYPOINT [ "/main" ]

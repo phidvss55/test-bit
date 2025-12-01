@@ -3,23 +3,41 @@ package main
 import (
 	"go-circleci/api"
 	"go-circleci/logger"
+	"go-circleci/repository"
 	"go-circleci/services"
 	"log"
 )
 
 func main() {
-	service := services.NewCatFactService("https://catfact.ninja/fact")
+	// Initialize SQLite database connection
+	db, err := services.InitDatabase("file:./app.db")
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	defer db.Close()
 
-	service = logger.NewLoggingService(service)
-
-	// fact, err := service.GetCatFact(context.TODO())
-	// if err != nil {
-	// 	panic(err)
+	// Create products table on startup
+	// if err := services.CreateProductsTable(db); err != nil {
+	// 	log.Fatalf("Failed to create products table: %v", err)
 	// }
 
-	// fmt.Printf("%+v\n", fact)
+	// Create product repository instance
+	productRepo := repository.NewSQLiteProductRepository(db)
 
+	// Create product service instance
+	productService := services.NewProductService(productRepo)
+
+	// Create cat fact service instance
+	catFactService := services.NewCatFactService("https://catfact.ninja/fact")
+
+	// Create composite service that supports both CatFact and Product operations
+	compositeService := services.NewCompositeService(catFactService.(*services.CatFactService), productService)
+
+	// Wrap with logging
+	service := logger.NewLoggingService(compositeService)
+
+	// Pass composite service to API server
 	apiServer := api.NewApiServer(service)
 
-	log.Fatal(apiServer.Start(":3000"))
+	log.Fatal(apiServer.Start(":5000"))
 }

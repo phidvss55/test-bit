@@ -18,7 +18,31 @@ func NewApiServer(svc services.Service) *ApiServer {
 
 func (s *ApiServer) Start(listenAddress string) error {
 	http.HandleFunc("/healthz", s.handleHealthCheck)
+	http.HandleFunc("/test", s.handleTest)
 	http.HandleFunc("/", s.handleGetCatFact)
+	
+	// Product routes
+	http.HandleFunc("/products", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			s.handleGetAllProducts(w, r)
+		} else if r.Method == http.MethodPost {
+			s.handleCreateProduct(w, r)
+		} else {
+			writeJson(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		}
+	})
+	
+	http.HandleFunc("/products/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			s.handleGetProduct(w, r)
+		} else if r.Method == http.MethodPut {
+			s.handleUpdateProduct(w, r)
+		} else if r.Method == http.MethodDelete {
+			s.handleDeleteProduct(w, r)
+		} else {
+			writeJson(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		}
+	})
 
 	fmt.Printf("API server listening on %s\n", listenAddress)
 
@@ -27,6 +51,10 @@ func (s *ApiServer) Start(listenAddress string) error {
 
 func (s *ApiServer) handleHealthCheck(w http.ResponseWriter, r *http.Request) {
 	writeJson(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+func (s *ApiServer) handleTest(w http.ResponseWriter, r *http.Request) {
+	writeJson(w, http.StatusOK, map[string]string{"status": "test is ok", "error": ""})
 }
 
 func (s *ApiServer) handleGetCatFact(w http.ResponseWriter, r *http.Request) {
