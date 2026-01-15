@@ -9,11 +9,10 @@ COPY . .
 
 RUN go build -o main .
 
-FROM scratch
+FROM scratch as production-stage
 
 COPY --from=builder /app/main /
 
 EXPOSE 5000
 
 CMD ["/main"]
-# ENTRYPOINT [ "/main" ]

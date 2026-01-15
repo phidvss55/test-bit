@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker build -t test-circle-ci -f Dockerfile .
+
+docker tag test-circle-ci phidinh/test-circle-ci:v1
+
+docker push phidinh/test-circle-ci:v1

@@ -1,6 +1,14 @@
-bin
-
+.kiro
 .vscode
+
+bin
 
 Makefile
 apis.http
+.dockerignore
+.gitignore
+
+app.db
+build
+
+README.md
