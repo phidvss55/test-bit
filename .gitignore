@@ -2,3 +2,6 @@ bin
 
 # .vscode
 .kiro
+
+# Logs
+.env
