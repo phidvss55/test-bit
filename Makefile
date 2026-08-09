@@ -4,10 +4,10 @@ up:
 	docker-compose up -d
 
 build:
-	@go build -o bin/myapp main.go
+	@go build -o bin/main cmd/main.go
 
 run: build
-	./bin/myapp
+	./bin/main
 
 test:
 	go test -v

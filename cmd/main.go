@@ -1,9 +1,21 @@
 package main
 
+import (
+	"go-explorer/cmd/api"
+	"go-explorer/internal/env"
+	"log"
+)
+
 func main() {
-	// Load configuration
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		log.Fatalf("Failed to load configuration: %v", err)
+	cfg := api.Config{
+		Addr: env.GetEnv("PORT", ":8080"),
 	}
+
+	app := &api.Application{
+		Config: cfg,
+	}
+
+	mux := app.Mount()
+
+	log.Fatal(app.Run(mux))
 }

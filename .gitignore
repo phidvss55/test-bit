@@ -5,3 +5,4 @@ bin
 
 # Logs
 .env
+.DS_Store
